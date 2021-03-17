@@ -27,12 +27,5 @@ public class Trip {
         return tripId;
     }
 
-/*    @Override
-    public String toString() {
-        return "Trip{" +
-                "tripId='" + tripId + '\'' +
-                ", tStops=" + tripStops +
-                ", tStops Size=" + tripStops.size() +
-                '}' ;
-    }*/
+
 }

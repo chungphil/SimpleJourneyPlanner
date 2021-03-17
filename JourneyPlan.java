@@ -18,6 +18,7 @@ public class JourneyPlan extends GUI {
     private static double ZoomFactor = 1.2;
     private Stop selectedStop = null;
     private List<Stop> searchedStop = new ArrayList<>();
+    private HashSet<Trip> searchedTrip = new HashSet<>();
     private HashSet<Connection> selectedConnections = new HashSet<>();
 
     @Override
@@ -42,6 +43,7 @@ public class JourneyPlan extends GUI {
         }
         selectedConnections.clear();
         searchedStop.clear();
+        searchedTrip.clear();
         selectedStop = null;
     }
 
@@ -52,8 +54,9 @@ public class JourneyPlan extends GUI {
         if(selectedStop!=null) {
             //Prints Stop Name
             getTextOutputArea().append("Stop Name: " + selectedStop.getName());
+            getTextOutputArea().append("\nTrip ID: ");
             for (Trip t : selectedStop.getAllTrips()) {
-                getTextOutputArea().append("\nTrip ID: " + t.getTripId());
+                getTextOutputArea().append(" " + t.getTripId()+" ");
             }
         }
 
@@ -68,11 +71,14 @@ public class JourneyPlan extends GUI {
         if(searchedStop!= null) {
             searchedStop.forEach((n) ->
                     getTextOutputArea().append("\nStop Name: " + n.getName()));
+            searchedStop.forEach((n) ->
+                    searchedTrip.addAll(n.getAllTrips())
+            );
 
-//            for (Trip t : selectedStop.getAllTrips()) {//This is hashset of all trips.
-//                selectedConnections.addAll(t.getTripConnections());
-//                getTextOutputArea().append("\nTrip ID: " + t.getTripId());
-            //}
+            for (Trip t : searchedTrip) {//This is hashset of all trips.
+                selectedConnections.addAll(t.getTripConnections());
+
+            }
         }else{
             getTextOutputArea().append("Stop Name not recognised");
         }
@@ -100,12 +106,7 @@ public class JourneyPlan extends GUI {
 
         System.out.println("Stops: " + stops.size());
         System.out.println("Trips: " + trips.size());
-        //System.out.println(stops.get("OOBUS003").toString());
-        //System.out.println(trips.get("i1a_1").toString());
-        //System.out.println(connections.size());
-        //System.out.println(stops.get("OOBUS003").getOutgoingConnection());
-        //System.out.println(trips.get("i1a_1").getTripConnections());
-        //System.out.println(stopTrie.getAll("Lakeside"));
+
 
     }
 
@@ -113,7 +114,7 @@ public class JourneyPlan extends GUI {
     public void loadStops(File stopFile) {
 
         try {
-            //File myfile = new File("stops.txt");
+
             Scanner scan = new Scanner(stopFile);
 
             // This is to skip the first line of datafile which are headers
@@ -135,7 +136,7 @@ public class JourneyPlan extends GUI {
                 Stop s = new Stop(stop_id, stop_name, stop_loc);
                 stops.put(stop_id, s); // insert into hashmap
                 stopTrie.add(stop_name,s);
-                //stopsName.put(stop_name, s);//insert into stopsName hash for onSearch function.
+
 
             }
 

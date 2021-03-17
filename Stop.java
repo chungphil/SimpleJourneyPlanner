@@ -39,9 +39,6 @@ public class Stop
         return allTrips;
     }
 
-    public String getID(){
-        return stopId;
-    }
     
     public String getName(){
         return stopName;

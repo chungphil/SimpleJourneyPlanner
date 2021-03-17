@@ -12,26 +12,11 @@ public class Connection {
         this.connectionTrip = connectionTrip;
     }
 
-    public Stop getStartStop() {
-        return startStop;
-    }
-
-    public Stop getEndStop() {
-        return endStop;
-    }
 
     public Trip getConnectionTrip() {
         return connectionTrip;
     }
 
-/*    @Override
-    public String toString() {
-        return "Connection{" +
-                "startStop=" + startStop +
-                ", endStop=" + endStop +
-                ", connectionTrip=" + connectionTrip +
-                '}';
-    }*/
 
     public void draw(Graphics g){
         int startPointX =(int)startStop.getPoint().getX();
