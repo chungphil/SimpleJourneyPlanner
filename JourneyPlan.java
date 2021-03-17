@@ -2,22 +2,22 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
+import java.util.List;
 
 public class JourneyPlan extends GUI {
 // Instance fields
 
     private HashMap<String, Stop> stops = new HashMap<>();
-    private HashMap<String, Stop> stopsName = new HashMap<>();//missing 5 stops.
     private HashMap<String, Trip> trips = new HashMap<>();
     private HashSet<Connection> connections = new HashSet<>();
+    private Trie stopTrie = new Trie();
     public static Location origin = new Location(0,0);
     public static double scale=8;
     public static final int stopSize = 3;
     private static double ZoomFactor = 1.2;
     private Stop selectedStop = null;
+    private List<Stop> searchedStop = new ArrayList<>();
     private HashSet<Connection> selectedConnections = new HashSet<>();
 
     @Override
@@ -27,8 +27,13 @@ public class JourneyPlan extends GUI {
         }
         for (Connection c:connections){
             c.draw(g);}
+
         if(selectedStop != null) {
             selectedStop.highlightDraw(g);
+        }
+        if(searchedStop != null) {
+            searchedStop.forEach((n)->
+            n.highlightDraw(g));
         }
         if(selectedConnections!= null){
             for(Connection c: selectedConnections){
@@ -36,6 +41,7 @@ public class JourneyPlan extends GUI {
             }
         }
         selectedConnections.clear();
+        searchedStop.clear();
         selectedStop = null;
     }
 
@@ -58,14 +64,15 @@ public class JourneyPlan extends GUI {
         getTextOutputArea().setText("");
 
         String searchTerm = getSearchBox().getText();//string of search term
-        selectedStop = stopsName.get(searchTerm);//stop object based on  stop id
-        if(selectedStop!= null) {
-            getTextOutputArea().append("Stop Name: " + selectedStop.getName());
+        searchedStop = stopTrie.getAll(searchTerm);//stop object based on  stop id
+        if(searchedStop!= null) {
+            searchedStop.forEach((n) ->
+                    getTextOutputArea().append("\nStop Name: " + n.getName()));
 
-            for (Trip t : selectedStop.getAllTrips()) {//This is hashset of all trips.
-                selectedConnections.addAll(t.getTripConnections());
-                getTextOutputArea().append("\nTrip ID: " + t.getTripId());
-            }
+//            for (Trip t : selectedStop.getAllTrips()) {//This is hashset of all trips.
+//                selectedConnections.addAll(t.getTripConnections());
+//                getTextOutputArea().append("\nTrip ID: " + t.getTripId());
+            //}
         }else{
             getTextOutputArea().append("Stop Name not recognised");
         }
@@ -93,12 +100,12 @@ public class JourneyPlan extends GUI {
 
         System.out.println("Stops: " + stops.size());
         System.out.println("Trips: " + trips.size());
-        System.out.println("stopsname: "+ stopsName.size());
         //System.out.println(stops.get("OOBUS003").toString());
         //System.out.println(trips.get("i1a_1").toString());
         //System.out.println(connections.size());
         //System.out.println(stops.get("OOBUS003").getOutgoingConnection());
         //System.out.println(trips.get("i1a_1").getTripConnections());
+        //System.out.println(stopTrie.getAll("Lakeside"));
 
     }
 
@@ -127,8 +134,8 @@ public class JourneyPlan extends GUI {
 
                 Stop s = new Stop(stop_id, stop_name, stop_loc);
                 stops.put(stop_id, s); // insert into hashmap
-
-                stopsName.put(stop_name, s);//insert into stopsName hash for onSearch function.
+                stopTrie.add(stop_name,s);
+                //stopsName.put(stop_name, s);//insert into stopsName hash for onSearch function.
 
             }
 
