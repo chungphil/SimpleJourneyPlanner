@@ -41,8 +41,12 @@ public class JourneyPlan extends GUI {
                 c.highlightDraw(g);
             }
         }
-        selectedConnections.clear();
-        searchedStop.clear();
+        if(selectedConnections!= null) {
+            selectedConnections.clear();
+        }
+        if(searchedStop!=null) {
+            searchedStop.clear();
+        }
         searchedTrip.clear();
         selectedStop = null;
     }
